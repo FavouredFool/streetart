@@ -1,0 +1,34 @@
+{
+    "name": "StreetartControls",
+    "maps": [
+        {
+            "name": "Default",
+            "id": "51f93c5a-3e74-4d68-be49-2facd5aad5ca",
+            "actions": [
+                {
+                    "name": "Calibrate",
+                    "type": "Button",
+                    "id": "257d4194-6c60-41e8-b519-c92414771b62",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "374758cc-96cf-449b-9195-17ced9d1545a",
+                    "path": "<ViveController>{RightHand}/menu",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Calibrate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
