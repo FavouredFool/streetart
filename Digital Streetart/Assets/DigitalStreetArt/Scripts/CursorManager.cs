@@ -44,10 +44,6 @@ public class CursorManager : MonoBehaviour
         {
             raycastCursor.position = pos;
         }
-
-        if (!Physics.Raycast(new Ray(cursorTranslatedController.position, cursorTranslatedController.forward), out RaycastHit hit)) return;
-
-        Debug.Log("hit: " + hit);
     }
 
     bool RaycastPositionOnWall(out Vector3 position)
@@ -107,15 +103,35 @@ public class CursorManager : MonoBehaviour
 
     public void OnTriggerButton(InputAction.CallbackContext context)
     {
-        
         if (!context.action.WasPerformedThisFrame()) return;
 
-        if (!Physics.Raycast(new Ray(cursorTranslatedController.position, cursorTranslatedController.forward), out RaycastHit hit)) return;
+        Texture2D tex = ShootRaycast(Quaternion.identity);
+
+        if (tex == null) return;
+
+        for (int i = 0; i < 100; i++)
+        {
+            // Shoot a hundred slightly differently arranged raycasts
+
+            Quaternion offset;
+            // Create small offset
+
+            //offset = Quaternion.AngleAxis(Random.Range(-2f, 2f), Vector3.up) * Quaternion.AngleAxis(Random.Range(-2f, 2f), Vector3.right) * Quaternion.AngleAxis(Random.Range(-2f, 2f), Vector3.forward);
+
+            //ShootRaycast(offset);
+        }
+        
+        tex.Apply();
+    }
+
+    public Texture2D ShootRaycast(Quaternion offset)
+    {
+        if (!Physics.Raycast(new Ray(cursorTranslatedController.position, offset * cursorTranslatedController.forward), out RaycastHit hit)) return null;
 
         Renderer rend = hit.transform.GetComponent<Renderer>();
         MeshCollider meshCollider = hit.collider as MeshCollider;
 
-        if (rend == null || rend.sharedMaterial == null || rend.sharedMaterial.mainTexture == null || meshCollider == null) return;
+        if (rend == null || rend.sharedMaterial == null || rend.sharedMaterial.mainTexture == null || meshCollider == null) return null;
 
         Texture2D tex = rend.material.mainTexture as Texture2D;
         Vector2 pixelUV = hit.textureCoord;
@@ -123,9 +139,6 @@ public class CursorManager : MonoBehaviour
         pixelUV.y *= tex.height;
 
         tex.SetPixel((int)pixelUV.x, (int)pixelUV.y, Color.red);
-        tex.Apply();
-
-        Debug.Log(pixelUV);
-        
+        return tex;
     }
 }
