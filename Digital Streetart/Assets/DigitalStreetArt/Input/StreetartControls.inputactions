@@ -7,21 +7,21 @@
             "actions": [
                 {
                     "name": "Calibrate",
-                    "type": "Button",
+                    "type": "Value",
                     "id": "257d4194-6c60-41e8-b519-c92414771b62",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Spray",
-                    "type": "Button",
+                    "type": "Value",
                     "id": "c315743f-a213-42a7-beaa-ddf19a863c82",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [

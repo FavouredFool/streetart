@@ -5,6 +5,7 @@ using UnityEngine.XR.Interaction.Toolkit.Inputs;
 using UnityEngine.InputSystem.XR;
 using TMPro;
 using UnityEngine.InputSystem;
+using Unity.Mathematics;
 
 public class CursorManager : MonoBehaviour
 {
@@ -14,6 +15,16 @@ public class CursorManager : MonoBehaviour
     [SerializeField] Vector3 planePosition;
     [SerializeField] Vector3 planeNormal;
     [SerializeField] TMP_Text tutorialText;
+
+    [Header("Input")]
+    [SerializeField] InputActionReference triggerInput;
+
+    [Header("Spray")]
+    [SerializeField][Range(0.1f, 5)] float maxSprayAngle = 0.5f;
+    [SerializeField][Range(1, 10)] int minPaintSploshRadius = 2;
+    [SerializeField][Range(1, 10)] int maxPaintSploshRadius = 7;
+    [SerializeField][Range(1, 10)] int raycastsPerFrame = 5;
+
     private Plane plane;
     private int calibrationState = 0;
 
@@ -43,7 +54,12 @@ public class CursorManager : MonoBehaviour
         if (RaycastPositionOnWall(out var pos))
         {
             raycastCursor.position = pos;
-        }
+        }       
+    }
+
+    private void FixedUpdate()
+    {
+        SprayInput();
     }
 
     bool RaycastPositionOnWall(out Vector3 position)
@@ -101,44 +117,87 @@ public class CursorManager : MonoBehaviour
         }
     }
 
-    public void OnTriggerButton(InputAction.CallbackContext context)
+    public void SprayInput()
     {
-        if (!context.action.WasPerformedThisFrame()) return;
+        //if (!triggerInput.action.WasPerformedThisFrame()) return;
 
-        Texture2D tex = ShootRaycast(Quaternion.identity);
+        float inputValue = triggerInput.action.ReadValue<float>();
+
+        if (inputValue < 0.95f) return;
+
+        Texture2D tex = FindTexture();
 
         if (tex == null) return;
 
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < raycastsPerFrame; i++)
         {
             // Shoot a hundred slightly differently arranged raycasts
 
             Quaternion offset;
             // Create small offset
 
-            //offset = Quaternion.AngleAxis(Random.Range(-2f, 2f), Vector3.up) * Quaternion.AngleAxis(Random.Range(-2f, 2f), Vector3.right) * Quaternion.AngleAxis(Random.Range(-2f, 2f), Vector3.forward);
+            offset = Quaternion.AngleAxis(UnityEngine.Random.Range(-maxSprayAngle, maxSprayAngle), Vector3.up) * Quaternion.AngleAxis(UnityEngine.Random.Range(-maxSprayAngle, maxSprayAngle), Vector3.right) * Quaternion.AngleAxis(UnityEngine.Random.Range(-maxSprayAngle, maxSprayAngle), Vector3.forward);
 
-            //ShootRaycast(offset);
+            ShootRaycast(offset);
         }
         
         tex.Apply();
     }
 
-    public Texture2D ShootRaycast(Quaternion offset)
+    public Texture2D FindTexture()
     {
-        if (!Physics.Raycast(new Ray(cursorTranslatedController.position, offset * cursorTranslatedController.forward), out RaycastHit hit)) return null;
+        if (!Physics.Raycast(new Ray(cursorTranslatedController.position, cursorTranslatedController.forward), out RaycastHit hit)) return null;
 
         Renderer rend = hit.transform.GetComponent<Renderer>();
         MeshCollider meshCollider = hit.collider as MeshCollider;
 
         if (rend == null || rend.sharedMaterial == null || rend.sharedMaterial.mainTexture == null || meshCollider == null) return null;
 
-        Texture2D tex = rend.material.mainTexture as Texture2D;
-        Vector2 pixelUV = hit.textureCoord;
-        pixelUV.x *= tex.width;
-        pixelUV.y *= tex.height;
+        return rend.material.mainTexture as Texture2D;
+    }
 
-        tex.SetPixel((int)pixelUV.x, (int)pixelUV.y, Color.red);
+    public void ShootRaycast(Quaternion offset)
+    {
+        if (!Physics.Raycast(new Ray(cursorTranslatedController.position, offset * cursorTranslatedController.forward), out RaycastHit hit)) return;
+
+        Renderer rend = hit.transform.GetComponent<Renderer>();
+        MeshCollider meshCollider = hit.collider as MeshCollider;
+
+        if (rend == null || rend.sharedMaterial == null || rend.sharedMaterial.mainTexture == null || meshCollider == null) return;
+
+        Texture2D tex = rend.material.mainTexture as Texture2D;
+
+        Vector2 pixelUV = hit.textureCoord;
+
+        int centerX = Mathf.Clamp((int)(pixelUV.x * tex.width), 0, tex.width);
+        int centerY = Mathf.Clamp((int)(pixelUV.y * tex.height), 0, tex.height);
+
+        // radius based on offset distance from center
+        float maxAngle = Quaternion.Angle(Quaternion.identity, Quaternion.AngleAxis(maxSprayAngle, Vector3.right));
+        float currentAngle = Quaternion.Angle(offset, Quaternion.AngleAxis(maxSprayAngle, Vector3.right));
+
+        int dynamicRadius = (int)Map(currentAngle, 0, maxAngle, minPaintSploshRadius, maxPaintSploshRadius);
+
+        DrawCircle(tex, Color.red, centerX, centerY, dynamicRadius);
+    }
+
+    float Map(float s, float a1, float a2, float b1, float b2)
+    {
+        // https://forum.unity.com/threads/re-map-a-number-from-one-range-to-another.119437/
+        return b1 + (s - a1) * (b2 - b1) / (a2 - a1);
+    }
+
+    public Texture2D DrawCircle(Texture2D tex, Color color, int x, int y, int radius = 3)
+    {
+        // from: https://stackoverflow.com/questions/30410317/how-to-draw-circle-on-texture-in-unity
+
+        float rSquared = radius * radius;
+
+        for (int u = x - radius; u < x + radius + 1; u++)
+            for (int v = y - radius; v < y + radius + 1; v++)
+                if ((x - u) * (x - u) + (y - v) * (y - v) < rSquared)
+                    tex.SetPixel(u, v, color);
+
         return tex;
     }
 }
