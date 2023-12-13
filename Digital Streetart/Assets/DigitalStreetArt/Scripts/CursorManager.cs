@@ -92,8 +92,6 @@ public class CursorManager : MonoBehaviour
         rotationValueList.RemoveAt(0);
 
         cursorTranslatedController.rotation = CalcAvg(0, rotationValueList);
-
-        //Debug.Log($"latest: {latestValue}, cursorRotation: {cursorTranslatedController.rotation}");
     }
 
     private Quaternion CalcAvg(int iterator, List<Quaternion> values)
@@ -103,48 +101,6 @@ public class CursorManager : MonoBehaviour
             return Quaternion.Lerp(values[iterator], CalcAvg(++iterator, values), 0.5f);
         }
         return values[iterator];
-    }
-
-    /*
-    private Quaternion CalcAvg(List<Quaternion> rotationlist)
-    {
-        if (rotationlist.Count == 0)
-            throw new ArgumentException();
-
-        float x = 0, y = 0, z = 0, w = 0;
-        foreach (var go in rotationlist)
-        {
-            var q = go;
-            x += q.x; y += q.y; z += q.z; w += q.w;
-        }
-        float k = 1.0f / Mathf.Sqrt(x * x + y * y + z * z + w * w);
-        return new Quaternion(x * k, y * k, z * k, w * k);
-    }
-    */
-
-    Quaternion CalculateAverageQuaternion(List<Quaternion> values)
-    {
-        // https://gamedev.stackexchange.com/questions/119688/calculate-average-of-arbitrary-amount-of-quaternions-recursion
-        float x = 0, y = 0, z = 0, w = 0;
-
-        foreach (Quaternion quat in values)
-        {
-            x += quat.x;
-            y += quat.y;
-            z += quat.z;
-            w += quat.w;
-        }
-
-
-        float k = 1.0f / Mathf.Sqrt(x * x + y * y + z * z + w * w);
-
-        if (k > 1)
-        {
-            return values[values.Count-1];
-        }
-        
-
-        return new Quaternion(x * k, y * k, z * k, w * k);
     }
 
     void CursorPosition()
