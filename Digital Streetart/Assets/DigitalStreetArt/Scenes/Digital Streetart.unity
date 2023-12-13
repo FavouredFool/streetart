@@ -1458,10 +1458,11 @@ MonoBehaviour:
   tutorialText: {fileID: 511185123}
   triggerInput: {fileID: 8389862165534761779, guid: c1d3bb78aec48fc4aa7af57a189f53d8,
     type: 3}
-  maxSprayAngle: 1
+  maxSprayAngle: 0.5
+  fadeOutAngle: 3.06
   minPaintSploshRadius: 2
-  maxPaintSploshRadius: 6
-  raycastsPerFrame: 3
+  maxPaintSploshRadius: 4
+  raycastsPerFrame: 33
   topRightVirtualReferenceTransform: {fileID: 1119176635}
   bottomLeftVirtualReferenceTransform: {fileID: 1767514420}
 --- !u!114 &2062057672

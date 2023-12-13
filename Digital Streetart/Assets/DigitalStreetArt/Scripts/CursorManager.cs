@@ -21,9 +21,10 @@ public class CursorManager : MonoBehaviour
 
     [Header("Spray")]
     [SerializeField][Range(0.1f, 5)] float maxSprayAngle = 0.5f;
+    [SerializeField][Range(0.1f, 5)] float fadeOutAngle = 0.4f;
     [SerializeField][Range(1, 10)] int minPaintSploshRadius = 2;
     [SerializeField][Range(1, 10)] int maxPaintSploshRadius = 7;
-    [SerializeField][Range(1, 10)] int raycastsPerFrame = 5;
+    [SerializeField][Range(1, 100)] int raycastsPerFrame = 5;
 
     private Plane plane;
     private int calibrationState = 0;
@@ -41,6 +42,20 @@ public class CursorManager : MonoBehaviour
 
     Quaternion rotationOffset = Quaternion.identity;
 
+    const int kalmanFilterElements = 10;
+
+    List<Vector3> positionValueList = new(kalmanFilterElements);
+
+    KalmanFilterVector3 kalmanFilter3D = new();
+
+    private void Awake()
+    {
+        for (int i = 0; i < kalmanFilterElements; i++)
+        {
+            positionValueList.Add(Vector3.zero);
+        }
+    }
+
     void Start()
     {
         plane = new Plane(planeNormal, planePosition);
@@ -48,7 +63,6 @@ public class CursorManager : MonoBehaviour
 
     void Update()
     {
-        cursorTranslatedController.position = DistortPositionBasedOnReferencePoints(stabilizedController.transform.position);
         cursorTranslatedController.rotation = stabilizedController.transform.rotation * rotationOffset;
 
         if (RaycastPositionOnWall(out var pos))
@@ -59,7 +73,25 @@ public class CursorManager : MonoBehaviour
 
     private void FixedUpdate()
     {
+        CursorPosition();
         SprayInput();
+    }
+
+    void CursorPosition()
+    {
+        Vector3 latestValue = DistortPositionBasedOnReferencePoints(stabilizedController.transform.position);
+
+        positionValueList.Add(latestValue);
+        positionValueList.RemoveAt(0);
+
+        // Apply kalman filter for last X values
+        // Info about Q and R here: https://stackoverflow.com/questions/21245167/kalman-filter-in-computer-vision-the-choice-of-q-and-r-noise-covariances
+        // in Short:
+        // R is: "how much noise is in my measurements / to what extend can I trust my measurement?"
+        // Q is: "how much does my measured Element move?"
+        cursorTranslatedController.position = kalmanFilter3D.Update(positionValueList, false, 1, 10);
+
+        kalmanFilter3D.Reset();
     }
 
     bool RaycastPositionOnWall(out Vector3 position)
@@ -135,10 +167,11 @@ public class CursorManager : MonoBehaviour
 
             Quaternion offset;
             // Create small offset
+            // Randomize max angle to create fade-out effect
+            float randomMaxAngle = UnityEngine.Random.Range(maxSprayAngle, maxSprayAngle + fadeOutAngle);
+            offset = Quaternion.AngleAxis(UnityEngine.Random.Range(-randomMaxAngle, randomMaxAngle), Vector3.up) * Quaternion.AngleAxis(UnityEngine.Random.Range(-randomMaxAngle, randomMaxAngle), Vector3.right) * Quaternion.AngleAxis(UnityEngine.Random.Range(-randomMaxAngle, randomMaxAngle), Vector3.forward);
 
-            offset = Quaternion.AngleAxis(UnityEngine.Random.Range(-maxSprayAngle, maxSprayAngle), Vector3.up) * Quaternion.AngleAxis(UnityEngine.Random.Range(-maxSprayAngle, maxSprayAngle), Vector3.right) * Quaternion.AngleAxis(UnityEngine.Random.Range(-maxSprayAngle, maxSprayAngle), Vector3.forward);
-
-            ShootRaycast(offset);
+            ShootRaycast(offset, randomMaxAngle);
         }
         
         tex.Apply();
@@ -146,7 +179,7 @@ public class CursorManager : MonoBehaviour
 
     public Texture2D FindTexture()
     {
-        if (!Physics.Raycast(new Ray(cursorTranslatedController.position, cursorTranslatedController.forward), out RaycastHit hit)) return null;
+        if (!Physics.Raycast(new Ray(cursorTranslatedController.position, cursorTranslatedController.TransformDirection(localForwardVector)), out RaycastHit hit)) return null;
 
         Renderer rend = hit.transform.GetComponent<Renderer>();
         MeshCollider meshCollider = hit.collider as MeshCollider;
@@ -156,9 +189,9 @@ public class CursorManager : MonoBehaviour
         return rend.material.mainTexture as Texture2D;
     }
 
-    public void ShootRaycast(Quaternion offset)
+    public void ShootRaycast(Quaternion offset, float randomMaxAngle)
     {
-        if (!Physics.Raycast(new Ray(cursorTranslatedController.position, offset * cursorTranslatedController.forward), out RaycastHit hit)) return;
+        if (!Physics.Raycast(new Ray(cursorTranslatedController.position, offset * cursorTranslatedController.TransformDirection(localForwardVector)), out RaycastHit hit)) return;
 
         Renderer rend = hit.transform.GetComponent<Renderer>();
         MeshCollider meshCollider = hit.collider as MeshCollider;
@@ -173,10 +206,10 @@ public class CursorManager : MonoBehaviour
         int centerY = Mathf.Clamp((int)(pixelUV.y * tex.height), 0, tex.height);
 
         // radius based on offset distance from center
-        float maxAngle = Quaternion.Angle(Quaternion.identity, Quaternion.AngleAxis(maxSprayAngle, Vector3.right));
-        float currentAngle = Quaternion.Angle(offset, Quaternion.AngleAxis(maxSprayAngle, Vector3.right));
+        float maxAngle = Quaternion.Angle(Quaternion.identity, Quaternion.AngleAxis(randomMaxAngle, Vector3.right));
+        float currentAngle = Quaternion.Angle(offset, Quaternion.AngleAxis(randomMaxAngle, Vector3.right));
 
-        int dynamicRadius = (int)Map(currentAngle, 0, maxAngle, minPaintSploshRadius, maxPaintSploshRadius);
+        int dynamicRadius = (int)Map(currentAngle, 0, maxAngle, minPaintSploshRadius, maxPaintSploshRadius);     
 
         DrawCircle(tex, Color.red, centerX, centerY, dynamicRadius);
     }
