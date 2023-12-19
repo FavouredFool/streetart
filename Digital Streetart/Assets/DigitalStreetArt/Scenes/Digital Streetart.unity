@@ -920,7 +920,7 @@ Transform:
   m_GameObject: {fileID: 1119176632}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4.45, y: 2.5, z: -5}
+  m_LocalPosition: {x: 4.7, y: 2.6, z: -5.5}
   m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1238,7 +1238,7 @@ Transform:
   m_GameObject: {fileID: 1767514417}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4.45, y: -2.5, z: 0}
+  m_LocalPosition: {x: -4.7, y: -2.6, z: -0.5}
   m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1458,11 +1458,11 @@ MonoBehaviour:
   tutorialText: {fileID: 511185123}
   triggerInput: {fileID: 8389862165534761779, guid: c1d3bb78aec48fc4aa7af57a189f53d8,
     type: 3}
-  maxSprayAngle: 0.5
-  fadeOutAngle: 3.06
-  minPaintSploshRadius: 2
-  maxPaintSploshRadius: 4
-  raycastsPerFrame: 33
+  maxSprayAngle: 2
+  fadeOutAngle: 3
+  minPaintSploshRadius: 3
+  maxPaintSploshRadius: 5
+  raycastsPerFrame: 20
   topRightVirtualReferenceTransform: {fileID: 1119176635}
   bottomLeftVirtualReferenceTransform: {fileID: 1767514420}
 --- !u!114 &2062057672
