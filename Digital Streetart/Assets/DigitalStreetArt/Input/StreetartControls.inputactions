@@ -12,6 +12,11 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
                     "initialStateCheck": true
                 },
                 {
@@ -22,6 +27,19 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+<<<<<<< Updated upstream
+=======
+                },
+                {
+                    "name": "ColorSelect",
+                    "type": "Button",
+                    "id": "3af79cf6-142f-40d3-9419-f8a248d5f20f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+>>>>>>> Stashed changes
+                    "initialStateCheck": false
+>>>>>>> Stashed changes
                 }
             ],
             "bindings": [
@@ -35,6 +53,11 @@
                     "action": "Calibrate",
                     "isComposite": false,
                     "isPartOfComposite": false
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
                 },
                 {
                     "name": "",
@@ -46,6 +69,21 @@
                     "action": "Spray",
                     "isComposite": false,
                     "isPartOfComposite": false
+<<<<<<< Updated upstream
+=======
+                },
+                {
+                    "name": "",
+                    "id": "40a8335c-1dc3-4e7c-b46d-db385c172d52",
+                    "path": "<ViveController>/trackpadClicked",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ColorSelect",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
                 }
             ]
         }

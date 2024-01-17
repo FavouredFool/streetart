@@ -16,9 +16,18 @@ public class CursorManager : MonoBehaviour
     [SerializeField] Vector3 planePosition;
     [SerializeField] Vector3 planeNormal;
     [SerializeField] TMP_Text tutorialText;
+<<<<<<< Updated upstream
 
     [Header("Input")]
     [SerializeField] InputActionReference triggerInput;
+=======
+<<<<<<< Updated upstream
+=======
+
+    [Header("Input")]
+    [SerializeField] InputActionReference triggerInput;
+    [SerializeField] InputActionReference colorInput;
+>>>>>>> Stashed changes
 
     [Header("Spray")]
     [SerializeField][Range(0.1f, 5)] float maxSprayAngle = 0.5f;
@@ -26,7 +35,13 @@ public class CursorManager : MonoBehaviour
     [SerializeField][Range(1, 10)] int minPaintSploshRadius = 2;
     [SerializeField][Range(1, 10)] int maxPaintSploshRadius = 7;
     [SerializeField][Range(1, 100)] int raycastsPerFrame = 5;
+<<<<<<< Updated upstream
 
+=======
+    [SerializeField] ColorWheel wheel;
+
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
     private Plane plane;
     private int calibrationState = 0;
 
@@ -67,6 +82,7 @@ public class CursorManager : MonoBehaviour
     void Start()
     {
         plane = new Plane(planeNormal, planePosition);
+        colorInput.action.performed += OnColorSelect;
     }
 
     void Update()
@@ -174,6 +190,21 @@ public class CursorManager : MonoBehaviour
                 break;
         }
     }
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+=======
+
+    public void OnColorSelect(InputAction.CallbackContext callbackContext)
+    {
+        if (callbackContext.action.WasPressedThisFrame()) wheel.ShowUI(true);
+        else if (callbackContext.action.WasReleasedThisFrame())
+        {
+            wheel.SelectColor();
+            wheel.ShowUI(false);
+        }
+    }
+>>>>>>> Stashed changes
 
     public void SprayInput()
     {
@@ -237,7 +268,11 @@ public class CursorManager : MonoBehaviour
 
         int dynamicRadius = (int)Map(currentAngle, 0, maxAngle, minPaintSploshRadius, maxPaintSploshRadius);     
 
+<<<<<<< Updated upstream
         DrawCircle(tex, Color.red, centerX, centerY, dynamicRadius);
+=======
+        DrawCircle(tex, wheel.CurrentColor, centerX, centerY, dynamicRadius);
+>>>>>>> Stashed changes
     }
 
     float Map(float s, float a1, float a2, float b1, float b2)
@@ -259,4 +294,8 @@ public class CursorManager : MonoBehaviour
 
         return tex;
     }
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 }
