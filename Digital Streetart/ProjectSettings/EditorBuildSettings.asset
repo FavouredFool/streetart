@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/DigitalStreetArt/Scenes/Digital Streetart.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    path: Assets/DigitalStreetArt/Scenes/Digital Streetart Big Screen.unity
+    guid: a06ba6282a22a3948b54c98593ee32dd
   m_configObjects:
     Unity.XR.OpenVR.Settings: {fileID: 11400000, guid: ea7a747a4817ecf45a23b0b16efffb0a,
       type: 2}
