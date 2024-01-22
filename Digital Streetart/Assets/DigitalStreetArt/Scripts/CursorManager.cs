@@ -16,9 +16,11 @@ public class CursorManager : MonoBehaviour
     [SerializeField] Vector3 planePosition;
     [SerializeField] Vector3 planeNormal;
     [SerializeField] TMP_Text tutorialText;
+    [SerializeField] private ColorWheel wheel;
 
     [Header("Input")]
     [SerializeField] InputActionReference triggerInput;
+    [SerializeField] InputActionReference colorInput;
 
     [Header("Spray")]
     [SerializeField][Range(0.1f, 5)] float maxSprayAngle = 0.5f;
@@ -33,10 +35,10 @@ public class CursorManager : MonoBehaviour
     [SerializeField] Transform topRightVirtualReferenceTransform;
     [SerializeField] Transform bottomLeftVirtualReferenceTransform;
 
-    // Die RealReferencePoints sollten während des Spiels werden mit zwei initialen Button-Presses o.ä. berechnet werden.
-    // Das wäre dann ein Recalibration-Process.
-    // Da die technisch gesehen sich nur ändern wenn die Lighthouses sich bewegen,
-    // könnte man die auch in einer Datei speichern damit man die nur einmal pro Session neu berechnen muss.
+    // Die RealReferencePoints sollten wï¿½hrend des Spiels werden mit zwei initialen Button-Presses o.ï¿½. berechnet werden.
+    // Das wï¿½re dann ein Recalibration-Process.
+    // Da die technisch gesehen sich nur ï¿½ndern wenn die Lighthouses sich bewegen,
+    // kï¿½nnte man die auch in einer Datei speichern damit man die nur einmal pro Session neu berechnen muss.
     Vector3 topRightRealReferencePoint = new Vector2(0, 0);
     Vector3 bottomLeftRealReferencePoint = new Vector2(0, 0);
     Vector3 localForwardVector = Vector3.forward;
@@ -237,7 +239,17 @@ public class CursorManager : MonoBehaviour
 
         int dynamicRadius = (int)Map(currentAngle, 0, maxAngle, minPaintSploshRadius, maxPaintSploshRadius);     
 
-        DrawCircle(tex, Color.red, centerX, centerY, dynamicRadius);
+        DrawCircle(tex, wheel.CurrentColor, centerX, centerY, dynamicRadius);
+    }
+    
+    public void OnColorSelect(InputAction.CallbackContext callbackContext)
+    {
+        if (callbackContext.action.WasPressedThisFrame()) wheel.ShowUI(true);
+        else if (callbackContext.action.WasReleasedThisFrame())
+        {
+            wheel.SelectColor();
+            wheel.ShowUI(false);
+        }
     }
 
     float Map(float s, float a1, float a2, float b1, float b2)
