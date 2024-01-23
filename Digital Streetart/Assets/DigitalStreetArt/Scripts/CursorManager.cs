@@ -21,6 +21,7 @@ public class CursorManager : MonoBehaviour
     [Header("Input")]
     [SerializeField] InputActionReference triggerInput;
     [SerializeField] InputActionReference colorInput;
+    [SerializeField] InputActionReference clearInput;
 
     [Header("Spray")]
     [SerializeField][Range(0.1f, 5)] float maxSprayAngle = 0.5f;
@@ -71,6 +72,7 @@ public class CursorManager : MonoBehaviour
         plane = new Plane(planeNormal, planePosition);
         colorInput.action.performed += OnColorSelect;
         colorInput.action.canceled += OnColorSelect;
+        clearInput.action.performed += OnClear;
     }
 
     void Update()
@@ -251,6 +253,21 @@ public class CursorManager : MonoBehaviour
         {
             wheel.SelectColor();
             wheel.ShowUI(false);
+        }
+    }
+
+    public void OnClear(InputAction.CallbackContext context)
+    {
+        if (context.action.WasPerformedThisFrame())
+        {
+            var tex = FindTexture();
+            if(tex == null) return;
+            for(int i = 0; i < tex.width; i++)
+            {
+                for (int j = 0; j < tex.height; j++)
+                    tex.SetPixel(i, j, Color.grey);
+            }
+            tex.Apply();
         }
     }
 
