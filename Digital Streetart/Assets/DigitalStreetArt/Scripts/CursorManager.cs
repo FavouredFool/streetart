@@ -69,6 +69,8 @@ public class CursorManager : MonoBehaviour
     void Start()
     {
         plane = new Plane(planeNormal, planePosition);
+        colorInput.action.performed += OnColorSelect;
+        colorInput.action.canceled += OnColorSelect;
     }
 
     void Update()

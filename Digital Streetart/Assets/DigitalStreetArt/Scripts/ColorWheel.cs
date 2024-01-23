@@ -8,7 +8,7 @@ public class ColorWheel : MonoBehaviour
     [SerializeField] public Transform projectedCursor;
     [SerializeField] public Transform raycastedCursor;
     [SerializeField] List<Color> colors = new List<Color>();
-    private int _resolution = 1000;
+    private int _resolution = 200;
     public Color CurrentColor { get; private set; }
     private Color _hoverColor = Color.clear;
     private bool _active = false;
@@ -36,7 +36,7 @@ public class ColorWheel : MonoBehaviour
         _texture.Apply();
     }
 
-    /*void UpdateUI()
+    void UpdateUI()
     {
         float width = 360f / colors.Count;
         int idx = 0;
@@ -47,21 +47,21 @@ public class ColorWheel : MonoBehaviour
             idx++;
         }
         _texture.Apply();
-    }*/
+    }
 
     // Update is called once per frame
     private void FixedUpdate()
     {
         if (!_active) return;
         transform.position = new Vector3(projectedCursor.transform.position.x, projectedCursor.transform.position.y, transform.position.z);
-        float angle = Vector2.SignedAngle(new Vector2(0, -1), raycastedCursor.transform.position - projectedCursor.transform.position) + 180;
+        float angle = Vector2.SignedAngle(new Vector2(0, -1), projectedCursor.transform.position - raycastedCursor.transform.position) + 180;
         var newColor = Vector2.Distance(projectedCursor.transform.position, raycastedCursor.transform.position) < 0.5 ? 
             Color.clear : colors[(int)(angle / (360f / colors.Count))];
         if(newColor != _hoverColor)
         {
             ClearTexture();
             _hoverColor = newColor;
-            //UpdateUI();
+            UpdateUI();
         }
     }
 

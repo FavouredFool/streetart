@@ -59,7 +59,7 @@
                 {
                     "name": "",
                     "id": "bd7c4ee2-f2a1-4b88-aaf9-55590cefdf27",
-                    "path": "",
+                    "path": "<ViveController>{RightHand}/trackpadClicked",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
