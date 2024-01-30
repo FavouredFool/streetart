@@ -7,7 +7,7 @@ public class WallController : MonoBehaviour
 {
     private void Start()
     {
-        Texture2D texture = new Texture2D(Screen.width, Screen.height);
+        Texture2D texture = new Texture2D(Screen.width / 4, Screen.height / 4);
         GetComponent<Renderer>().material.mainTexture = texture;
 
         for (int i = 0; i < texture.width; i++)

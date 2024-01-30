@@ -8,7 +8,7 @@ public class ColorWheel : MonoBehaviour
     [SerializeField] public Transform projectedCursor;
     [SerializeField] public Transform raycastedCursor;
     [SerializeField] List<Color> colors = new List<Color>();
-    private int _resolution = 200;
+    private int _resolution = 750;
     public Color CurrentColor { get; private set; }
     private Color _hoverColor = Color.clear;
     private bool _active = false;
