@@ -43,7 +43,7 @@ public class ColorWheel : MonoBehaviour
         DrawCircle(_texture, CurrentColor, _resolution/2, _resolution/2, radius: _resolution/10);
         foreach(Color c in colors)
         {
-            DrawCircle(_texture, c.WithAlpha(_hoverColor == c ? 1f : 0.7f), _resolution/2, _resolution/2, idx * width + 1, width - 2, _resolution/2 - (_hoverColor == c ? 0 : _resolution/20), _resolution/3);
+            DrawCircle(_texture, 1, _resolution/2, _resolution/2, idx * width + 1, width - 2, _resolution/2 - (_hoverColor == c ? 0 : _resolution/20), _resolution/3);
             idx++;
         }
         _texture.Apply();
