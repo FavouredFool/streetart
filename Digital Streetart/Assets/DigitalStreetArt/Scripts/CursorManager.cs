@@ -80,7 +80,9 @@ public class CursorManager : MonoBehaviour
         if (RaycastPositionOnWall(out var pos))
         {
             raycastCursor.position = pos;
-        }       
+        }
+
+        
     }
 
     private void FixedUpdate()
@@ -160,17 +162,17 @@ public class CursorManager : MonoBehaviour
         switch(calibrationState)
         {
             case 0:
-                tutorialText.text = "Press menu to calibrate lower left corner";
+                tutorialText.text = "Press \"menu\" to calibrate lower left corner";
                 calibrationState++;
                 break;
             case 1:
                 bottomLeftRealReferencePoint = stabilizedController.transform.position;
-                tutorialText.text = "Press menu to calibrate upper right corner";
+                tutorialText.text = "Press \"menu\" to calibrate upper right corner";
                 calibrationState++;
                 break;
             case 2:
                 topRightRealReferencePoint = stabilizedController.transform.position;
-                tutorialText.text = "Hold your Controller upright and press menu to finish calibration";
+                tutorialText.text = "Hold your Controller upright and press \"menu\" to finish calibration";
                 calibrationState++;
                 break;
             case 3:
