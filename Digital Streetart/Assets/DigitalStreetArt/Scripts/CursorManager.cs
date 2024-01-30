@@ -82,14 +82,13 @@ public class CursorManager : MonoBehaviour
             raycastCursor.position = pos;
         }
 
-        
+        SprayInput();
     }
 
     private void FixedUpdate()
     {
         CursorRotation();
         CursorPosition();
-        SprayInput();
     }
 
     void CursorRotation()
